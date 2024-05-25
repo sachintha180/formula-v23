@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" style="overflow-y: auto">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="module" src="script.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.0/css/bulma.min.css">
+    <title>Formula v23</title>
+</head>
+
+<body>
+    <div class="container">
+        <section id="info-section" class="section columns">
+            <div class="column">
+                <h1 id="instruction" class="title"></h1>
+                <div id="leaving">
+                    <button id="banker" class="button is-danger">Banker</button>
+                    <button id="player" class="button is-info">Player</button>
+                </div>
+                <div id="prediction">
+                    <button id="win" class="button is-success">Win</button>
+                    <button id="lose" class="button is-danger">Lose</button>
+                </div>
+                <div class="columns mt-5">
+                    <p id="total" class="column subtitle is-info">Total: 0</p>
+                    <p id="hand" class="column subtitle is-info">Current Hand: 0</p>
+                </div>
+            </div>
+            <!-- <div class="column">
+                <h2 class="subtitle">Table Key</h2>
+                <table id="key" class="table is-bordered is-narrow">
+                    <tr>
+                        <td class="is-light"></td>
+                        <td class="left">Baccarat Sides</td>
+                    </tr>
+                    <tr>
+                        <td class="is-warning"></td>
+                        <td class="left">V/H Combined Side</td>
+                    </tr>
+                    <tr>
+                        <td class="is-success"></td>
+                        <td class="left">Total</td>
+                    </tr>
+                </table>
+            </div> -->
+        </section>
+        <section id="result-section" class="section table-container">
+            <table id="shoe" class="table is-narrow">
+                <tr></tr>
+            </table>
+            <table id="calc" class="table is-narrow has-text-centered"></table>
+        </section>
+    </div>
+</body>
+
+</html>
