@@ -10,6 +10,7 @@ class Side {
     this.bet_index = 0;
     this.prediction = null;
     this.bet = null;
+    this.global_reset = false;
   }
 
   predict() {
@@ -24,17 +25,24 @@ class Side {
     }
   }
 
+  reset() {
+    this.max_leaving_hands++;
+    this.leaving_hands = this.max_leaving_hands;
+    this.bet_index = 0;
+    this.global_reset = false;
+  }
+
   validate(actual_hand) {
+    // reset global reset flag
+    this.global_reset = false;
+
     // predicting
     if (this.leaving_hands === 0) {
       // winning or reaching end
-      if (
-        this.prediction === actual_hand ||
-        this.bet_index === this.bets.length
-      ) {
-        this.max_leaving_hands++;
-        this.leaving_hands = this.max_leaving_hands;
-        this.bet_index = 0;
+      if (this.prediction === actual_hand) {
+        this.reset();
+      } else if (this.bet_index === this.bets.length) {
+        this.global_reset = true;
       }
     }
     // leaving

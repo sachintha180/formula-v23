@@ -7,6 +7,7 @@ let sides = [new Side(2), new Cont()];
 let prediction = null;
 let bet = null;
 let total = 0;
+let effect_range = 3;
 
 // initialize global DOM elements
 let instruction_lbl;
@@ -120,8 +121,12 @@ const validate = (actual_hand) => {
 
   // validate + tabulate individual sides
   const side_row = document.createElement("tr");
+  let reset_indices = [];
   sides.forEach((side, index) => {
     side.validate(actual_hand);
+    if (side.global_reset) {
+      reset_indices.push(index);
+    }
     const side_element = document.createElement("td");
     if (side.prediction !== null) {
       side_element.innerHTML = `${actual_hand === side.prediction ? "+" : "-"}${
@@ -136,6 +141,7 @@ const validate = (actual_hand) => {
       side_element.classList.add("is-light");
     }
     side_row.appendChild(side_element);
+    console.log(side);
   });
 
   // tabulate final prediction
@@ -159,15 +165,21 @@ const validate = (actual_hand) => {
   hand_count_lbl.innerHTML = `Current Hand: ${shoe.length}`;
 
   // tabulate shoe
-  const hand_item = document.createElement("td");
-  if (shoe[shoe.length - 1] === 0) {
-    hand_item.innerHTML = "B";
-    hand_item.classList.add("is-danger");
-  } else {
-    hand_item.innerHTML = "P";
-    hand_item.classList.add("is-info");
-  }
-  shoe_tbl.appendChild(hand_item);
+  shoe_tbl.innerHTML = "";
+  shoe_tbl.appendChild(encode(shoe));
+
+  // check for global reset
+  // NOTE: Works under the assumption that there's min. [effect_range] sides in sides[]
+  reset_indices.forEach((reset_index) => {
+    // console.log(
+    //   `Global Reset from i=${reset_index}, i=${reset_index + 2} (l=${
+    //     sides.length
+    //   })`
+    // );
+    for (let i = reset_index; i < reset_index + effect_range; i++) {
+      sides[i].reset();
+    }
+  });
 
   // prepare additional side
   const side = new Side(sides[sides.length - 2].max_leaving_hands + 1);
@@ -178,6 +190,65 @@ const validate = (actual_hand) => {
 
   // repeat predict
   predict();
+};
+
+const encode = (shoe) => {
+  // intialize encoding variables
+  let b = [[shoe[0], 0, 0]];
+  let c = 0;
+  let t = shoe[0];
+  let maxR = 0;
+
+  // iterate across shoe
+  for (let i = 1; i < shoe.length; i++) {
+    if (t != shoe[i]) {
+      t = shoe[i];
+      c += 1;
+    }
+
+    if (shoe[i - 1] == shoe[i]) {
+      b.push([shoe[i], b[b.length - 1][1] + 1, c]);
+    } else {
+      b.push([shoe[i], 0, c]);
+    }
+
+    if (b[b.length - 1][1] > maxR) {
+      maxR = b[b.length - 1][1];
+    }
+  }
+
+  // create all table data elements
+  let g = [];
+  for (let i = 0; i < maxR + 1; i++) {
+    let f = [];
+    for (let j = 0; j < c + 1; j++) {
+      f.push(document.createElement("td"));
+    }
+    g.push(f);
+  }
+
+  // configure all table data elements
+  for (let i = 0; i < b.length; i++) {
+    if (b[i][0] === 0) {
+      g[b[i][1]][b[i][2]].innerHTML = "B";
+      g[b[i][1]][b[i][2]].classList.add("is-danger");
+    } else {
+      g[b[i][1]][b[i][2]].innerHTML = "P";
+      g[b[i][1]][b[i][2]].classList.add("is-info");
+    }
+  }
+
+  // create table rows
+  let frag = document.createDocumentFragment();
+  g.forEach((gr) => {
+    let tr = document.createElement("tr");
+    gr.forEach((gt) => {
+      tr.appendChild(gt);
+    });
+    frag.appendChild(tr);
+  });
+
+  return frag;
 };
 
 window.onload = init;
