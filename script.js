@@ -171,11 +171,6 @@ const validate = (actual_hand) => {
   // check for global reset
   // NOTE: Works under the assumption that there's min. [effect_range] sides in sides[]
   reset_indices.forEach((reset_index) => {
-    // console.log(
-    //   `Global Reset from i=${reset_index}, i=${reset_index + 2} (l=${
-    //     sides.length
-    //   })`
-    // );
     for (let i = reset_index; i < reset_index + effect_range; i++) {
       sides[i].reset();
     }
